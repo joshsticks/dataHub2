@@ -8,7 +8,8 @@ define([
 		template: _.template(Template),
 
 		events: {
-			"click #something": "clickedSomething"
+			"submit #login-form": "submitForm",
+			"click #submit-button": "submitForm"
 		},
 
 		initialize: function () { },
@@ -18,8 +19,10 @@ define([
 			return this;
 		},
 
-		clickedSubmit: function ( eventName ) {
-			
+		submitForm: function ( eventName ) {
+			eventName.preventDefault();
+			window.location = "#" + $("#code").val() + "/age";
+			return false;
 		}
 	});
 
