@@ -20,9 +20,14 @@ define([
 
 		submit: function ( eventName ) {
 			eventName.preventDefault();
-			var id = Backbone.history.fragment;
-			id = id.replace("age", "");
-			window.location = "#" + id + $("#age").val() + "/activities";
+			$("#error").hide();
+			if ( $("#age").val() != "") {
+				var id = Backbone.history.fragment;
+				id = id.replace("age", "");
+				window.location = "#" + id + $("#age").val() + "/" + $("#gender option:selected").val() + "/activities";
+			} else {
+				$("#error").show();
+			}
 			return false;
 		}
 	});

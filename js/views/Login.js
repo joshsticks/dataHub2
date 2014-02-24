@@ -8,8 +8,7 @@ define([
 		template: _.template(Template),
 
 		events: {
-			"submit #login-form": "submitForm",
-			"click #submit-button": "submitForm"
+			"submit #login-form": "submitForm"
 		},
 
 		initialize: function () { },
@@ -21,7 +20,13 @@ define([
 
 		submitForm: function ( eventName ) {
 			eventName.preventDefault();
-			window.location = "#" + $("#code").val() + "/age";
+			$("#error").hide();
+			if ( $("#code").val() != "") {
+				window.location = "#" + $("#code").val() + "/age";
+			} else {
+				$("#error").show();
+			}
+			
 			return false;
 		}
 	});

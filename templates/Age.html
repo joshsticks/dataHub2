@@ -1,9 +1,15 @@
-<h1>SMV Boost</h1>
+<h1><img src="images/iggyIcon_mini.png">SMV Boost</h1>
 <form id="age-form">
 	<fieldset>
-		<h2>Please Enter Your Age</h2>
+		<h2>Please Enter Your Age and Gender</h2>
 		<label for="age">Age:</label>
 		<input id="age" name="age" type="number"/>
+		<label for="gender">Gender:</label>
+		<select id="gender" name="gender">
+  			<option value="1">Male</option>
+  			<option value="2">Female</option>	
+		</select>
 		<input id="submit" class="main-button" name="submit" type="submit"/>
+		<label id="error" style="display:none">*Please Enter Your Age</label>
 	</fieldset>
 </form>

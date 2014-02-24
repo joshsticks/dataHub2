@@ -7,24 +7,22 @@ define([
 	var ActivitiesView = Backbone.View.extend({
 		template: _.template(Template),
 
-		events: {
-			"click .button ": "activitySelected"
-		 },
-
 		initialize: function () { },
+
+		events: {
+			"click #exit": "exitClicked"
+		 },
 
 		render: function () {
 			this.$el.html(this.template({baseUrl: "#"+Backbone.history.fragment.replace("activities", "activity/")}));
 			return this;
 		},
 
-		activitiySelected: function ( eventName ) {
+		exitClicked: function ( eventName ) {
 			eventName.preventDefault();
-			// var id = Backbone.history.fragment;
-			// id = id.replace("age", "");
-			// window.location = "#" + id + $("#age").val() + "/activities";
+			window.location = "#";
 			return false;
-		}
+		},
 	});
 
 	return ActivitiesView;

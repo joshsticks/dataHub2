@@ -4,6 +4,7 @@ requirejs.config({
 		'jquery':  'lib/jquery-1.10.2.min',
 		'underscore': 'lib/underscore-1.5.2.min',
 		'backbone': 'lib/backbone-1.1.0.min',
+		'chart': 'lib/chart.min',
 		'text': 'lib/text',
 		'async': 'lib/asynce',
 		'templates': '../templates'

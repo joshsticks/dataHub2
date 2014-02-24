@@ -1,1 +1,9 @@
-<h1><%= displayName%></h1>
+<h1><img src="images/iggyIcon_mini.png">SMV Boost</h1>
+<h2><%= displayName%></h2>
+<h3>Results For <%= age%> Year Old <%if (gender == 1) {%>Males<%} else { %>Females<%}%></h3>
+<canvas id="myChart" width="800" height="400"></canvas>
+<h3 id="yourScore"></h3>
+<div id="button-holder">
+	<input id="back" class="main-button" value="Back" type="button"/>
+	<input id="exit" class="main-button" value="Exit" type="button"/>
+</div>
