@@ -112,6 +112,7 @@ label {
 .button-container {
 	margin-top: 2%;
 	margin-bottom: 2%;
+	margin-left:2%;
 }
 
 h1 img {
@@ -120,6 +121,7 @@ h1 img {
 	height: 37px;
 	width: 35.2px;
 	margin-bottom: 0px;
+	margin-left: -15px;
 }
 
 .main-button.m {
