@@ -3,7 +3,7 @@ define([
 	'underscore',
 	'backbone',
 	'text!templates/Activity.html',
-	'text!activities.json',
+	'text!activities.txt',
 	'chart'
 ], function ( $, _, Backbone, Template, ActivitiesJSON, chart ) {
 	var VerticalLeapView = Backbone.View.extend({
@@ -76,9 +76,13 @@ define([
 					}
 
 					var myScore = parseFloat($(response).find("ExhibitSession VerticalLeap").attr("HeightInches")).toFixed(1);
-					var meIndex = $.inArray( myScore, labelArray);
-					labelArray[meIndex] = "My Score " + labelArray[meIndex];
-					$("#yourScore").text("My Score " + myScore + " Inches");
+					if ( myScore != "NaN") {
+						var meIndex = $.inArray( myScore, labelArray);
+						labelArray[meIndex] = "My Score " + labelArray[meIndex];
+						$("#yourScore").text("My Score " + myScore + " Inches");
+					} else {
+						$("#yourScore").text("No Data");
+					}
 
 					var ctx = document.getElementById("myChart").getContext("2d");
 					var mychart = new Chart(ctx).Bar(data, options);

@@ -79,6 +79,8 @@ label {
 	margin-right: 15px;
 	margin-bottom: 2%;
 	width: 180px;
+	/*margin: 0 auto;*/
+	/*width: 25%;*/
 	height: 230px;
 	text-align: center;
 }
@@ -110,9 +112,12 @@ label {
 }
 
 .button-container {
+	margin: 0 auto;
+	width: 100%;
 	margin-top: 2%;
 	margin-bottom: 2%;
 	margin-left:2%;
+	float: left;
 }
 
 h1 img {

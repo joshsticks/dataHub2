@@ -3,7 +3,7 @@ define([
 	'underscore',
 	'backbone',
 	'text!templates/Activity.html',
-	'text!activities.json',
+	'text!activities.txt',
 	'chart'
 ], function ( $, _, Backbone, Template, ActivitiesJSON, chart ) {
 	var CreativityView = Backbone.View.extend({
