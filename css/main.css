@@ -68,8 +68,7 @@ label {
 #button-holder {
 	margin: 0 auto;
 	display: block;
-	width: 50%;
-	padding-left:10%;
+	width: 258px;
 }
 
 .exhibit-item-holder {
@@ -83,6 +82,36 @@ label {
 	/*width: 25%;*/
 	height: 230px;
 	text-align: center;
+}
+
+.button-container {
+	margin: 0 auto;
+	width: 100%;
+	margin-top: 2%;
+	margin-bottom: 2%;
+	margin-left:2%;
+	float: left;
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	.button-container {
+		margin: 0 auto;
+		width: 258px;
+		margin-top: 2%;
+		margin-bottom: 2%;
+		float: none;
+	}
+
+	.exhibit-item-holder {
+		position: relative;margin-left: 15px;
+		margin-right: 15px;
+		margin-bottom: 2%;
+		width: 258px;
+		margin: 0 auto;
+		/*width: 25%;*/
+		height: 230px;
+		text-align: center;
+	}
 }
 
 .exhibit-item {
@@ -111,14 +140,7 @@ label {
 	background-image: url("../images/button_selected.png");
 }
 
-.button-container {
-	margin: 0 auto;
-	width: 100%;
-	margin-top: 2%;
-	margin-bottom: 2%;
-	margin-left:2%;
-	float: left;
-}
+
 
 h1 img {
 	display: inline;

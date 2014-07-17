@@ -85,7 +85,7 @@ define([
 					}
 
 					var ctx = document.getElementById("myChart").getContext("2d");
-					var mychart = new Chart(ctx).Bar(data, options);
+					var mychart = new Chart(ctx).HorizontalBar(data, options);
             			},
             			error: function ( data ) {
             				alert("Failed to retrieve exhibit session data");
