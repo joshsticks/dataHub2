@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!templates/Activity.html',
+	'text!templates/NonComparableActivity.html',
 	'text!activities.txt',
 	'chart'
 ], function ( $, _, Backbone, Template, ActivitiesJSON, chart ) {
@@ -20,6 +20,7 @@ define([
 		initialize: function () { },
 
 		render: function () {
+			var self = this;
 			var id = Backbone.history.fragment.replace(/^.*\/activity\//, "");
 			var activity = _.where( this.activities, {id: id})[0];
 
@@ -28,60 +29,24 @@ define([
 			var gender = trimmed.replace(/^[0-9]+\//, "");
 			var age = trimmed.replace(/\/[0-9]+/, "");
 			this.$el.html(this.template( {displayName: activity.displayName, age: age, gender: gender} ));
-
+			this.$el.find("#results-table thead tr").html("<th>Score</th><th>Season</th><th>Day Of The Week</th>");
 			var user = Backbone.history.fragment.replace(/\/.*/, "");
 			$.ajax({
             			type: "POST",
-            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitComparison",
-            			data: {userId:  user, exhibitTypeId: activity.activityId, genderTypeId: gender, age: age, filters: ""},
+            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitSessions",
+            			data: {userId:  user, exhibitTypeId: activity.activityId},
             			dataType:  this.typeOfData,
             			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             			success: function ( response ) { 
-            				var dataArray, labelArray =[ ];
-					labelArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("SelfReportScore");
-					}) ;
-
-					dataArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("Count");
-					}) ;
-
-					var options = { 
-						//Boolean - If we want to override with a hard coded scale
-						scaleOverride : true,
-	
-						//** Required if scaleOverride is true **
-						//Number - The number of steps in a hard coded scale
-						scaleSteps : 3,
-						
-						//Number - The value jump in the hard coded scale
-						scaleStepWidth :  Math.ceil(Math.max.apply(Math, dataArray), 3),
-						
-						//Number - The scale starting value
-						scaleStartValue : 0,
-
-						scaleFontColor : "#562147"
-					}
-            				var data = {
-						labels : labelArray,
-						datasets : [
-							{
-								fillColor : "rgba(86,33,71,0.5)",
-								strokeColor : "rgba(86,33,71,1)",
-								data : dataArray
-							}
-						]
-					}
-
-					var myScore = parseFloat($(response).find("ExhibitSession HappinessScale").attr("SelfReportScore")).toFixed(0);
-					var meIndex = $.inArray( myScore, labelArray);
-					labelArray[meIndex] = "My Score " + labelArray[meIndex];
-					$("#yourScore").text("My Score " + myScore);
-
-					var ctx = document.getElementById("myChart").getContext("2d");
-					var mychart = new Chart(ctx).HorizontalBar(data, options);
+            				var sessions = $(response).find("ExhibitSessions").children();
+            				var level = null;
+            				var secondsHeld = null;
+            				_.each(sessions, function (session) {
+            					score = $(session).find("HappinessScale").attr("SelfReportScore");
+            					season = $(session).find("HappinessScale").attr("Season");
+            					dayOfWeek = $(session).find("HappinessScale").attr("DayOfTheWeek");
+            					self.$el.find("#results-table tbody").append("<tr><td>"+score+"</td><td>"+season+"</td><td>"+dayOfWeek+"</td></tr>")
+            				});
             			},
             			error: function ( data ) {
             				alert("Failed to retrieve exhibit session data");

@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!templates/Activity.html',
+	'text!templates/NonComparableActivity.html',
 	'text!activities.txt',
 	'chart'
 ], function ( $, _, Backbone, Template, ActivitiesJSON, chart ) {
@@ -20,6 +20,7 @@ define([
 		initialize: function () { },
 
 		render: function () {
+			var self = this;
 			var id = Backbone.history.fragment.replace(/^.*\/activity\//, "");
 			var activity = _.where( this.activities, {id: id})[0];
 
@@ -28,60 +29,37 @@ define([
 			var gender = trimmed.replace(/^[0-9]+\//, "");
 			var age = trimmed.replace(/\/[0-9]+/, "");
 			this.$el.html(this.template( {displayName: activity.displayName, age: age, gender: gender} ));
-
+			this.$el.find("#results-table thead tr").html("<th>Visit #</th><th>Biometric</th><th>Result</th>");
 			var user = Backbone.history.fragment.replace(/\/.*/, "");
 			$.ajax({
             			type: "POST",
-            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitComparison",
-            			data: {userId:  user, exhibitTypeId: activity.activityId, genderTypeId: gender, age: age, filters: ""},
+            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitSessions",
+            			data: {userId:  user, exhibitTypeId: activity.activityId},
             			dataType:  this.typeOfData,
             			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             			success: function ( response ) { 
-            				var dataArray, labelArray =[ ];
-					labelArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("Inches");
-					}) ;
-
-					dataArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("Count");
-					}) ;
-
-					var options = { 
-						//Boolean - If we want to override with a hard coded scale
-						scaleOverride : true,
-	
-						//** Required if scaleOverride is true **
-						//Number - The number of steps in a hard coded scale
-						scaleSteps : 3,
-						
-						//Number - The value jump in the hard coded scale
-						scaleStepWidth :  Math.ceil(Math.max.apply(Math, dataArray), 3),
-						
-						//Number - The scale starting value
-						scaleStartValue : 0,
-
-						scaleFontColor : "#562147"
-					}
-            				var data = {
-						labels : labelArray,
-						datasets : [
-							{
-								fillColor : "rgba(86,33,71,0.5)",
-								strokeColor : "rgba(86,33,71,1)",
-								data : dataArray
-							}
-						]
-					}
-
-					var myScore = parseFloat($(response).find("ExhibitSession VerticalLeap").attr("HeightInches")).toFixed(1);
-					var meIndex = $.inArray( myScore, labelArray);
-					labelArray[meIndex] = "My Score " + labelArray[meIndex];
-					$("#yourScore").text("My Score " + myScore + " Inches");
-
-					var ctx = document.getElementById("myChart").getContext("2d");
-					var mychart = new Chart(ctx).HorizontalBar(data, options);
+            				var sessions = $(response).find("ExhibitSessions").children();
+            				var count = 0;
+            				_.each(sessions, function (session) {
+            					count++;
+            					bpmLow = $(session).find("Biometrics").attr("BPMLow");
+            					bpmHigh = $(session).find("Biometrics").attr("BPMHigh");
+            					bpmStart = $(session).find("Biometrics").attr("BPMStart");
+            					bpmFinish = $(session).find("Biometrics").attr("BPMFinish");
+            					tempLow = $(session).find("Biometrics").attr("TemperatureLow");
+            					tempHigh = $(session).find("Biometrics").attr("TemperatureHigh");
+            					tempStart = $(session).find("Biometrics").attr("TemperatureStart");
+            					tempFinish = $(session).find("Biometrics").attr("TemperatureFinish");
+            					self.$el.find("#results-table tbody").append("<tr><td rowspan='9'>"+count+"</td><td>BPM Low</td><td>"+bpmLow+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>BPM High</td><td>"+bpmHigh+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>BPM Start</td><td>"+bpmStart+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>BPM Finish</td><td>"+bpmFinish+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>Temp Low</td><td>"+tempLow+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>Temp High</td><td>"+tempHigh+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>Temp Start</td><td>"+tempStart+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td>Temp Finish</td><td>"+tempFinish+"</td></tr>");
+            					self.$el.find("#results-table tbody").append("<tr><td colspan='1'>---------------------</td></tr>");
+            				});
             			},
             			error: function ( data ) {
             				alert("Failed to retrieve exhibit session data");
