@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!templates/Activity.html',
+	'text!templates/NonComparableActivity.html',
 	'text!activities.txt',
 	'chart'
 ], function ( $, _, Backbone, Template, ActivitiesJSON, chart ) {
@@ -20,6 +20,7 @@ define([
 		initialize: function () { },
 
 		render: function () {
+			var self = this;
 			var id = Backbone.history.fragment.replace(/^.*\/activity\//, "");
 			var activity = _.where( this.activities, {id: id})[0];
 
@@ -28,60 +29,46 @@ define([
 			var gender = trimmed.replace(/^[0-9]+\//, "");
 			var age = trimmed.replace(/\/[0-9]+/, "");
 			this.$el.html(this.template( {displayName: activity.displayName, age: age, gender: gender} ));
-
+			this.$el.find("h3").html("Your Recipes");
 			var user = Backbone.history.fragment.replace(/\/.*/, "");
 			$.ajax({
             			type: "POST",
-            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitComparison",
-            			data: {userId:  user, exhibitTypeId: activity.activityId, genderTypeId: gender, age: age, filters: ""},
+            			url: "/ImprovingGroundsService/ImprovingGroundsService.asmx/GetExhibitSessions",
+            			data: {userId:  user, exhibitTypeId: activity.activityId},
             			dataType:  this.typeOfData,
             			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             			success: function ( response ) { 
-            				var dataArray, labelArray =[ ];
-					labelArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("Inches");
-					}) ;
+            				var sessions = $(response).find("ExhibitSessions").children();
+            				_.each(sessions, function (session) {
+            					recipeName = $(session).find("recipeName").text();
+            					servings = $(session).find("servings").text()
+            					ingredients = $(session).find("ingredients").children();
+            					directions = $(session).find("directions").children();
+            					self.$el.find("#results-table").replaceWith("<div id='recipes'></div>");
+            					self.$el.find("#recipes").append("<hr />");
+            					self.$el.find("#recipes").append("<h4>"+recipeName+" Servings: "+servings+"</h4>");
+            					self.$el.find("#recipes").append("<img class='food-image' src=images/recipe_"+recipeName.replace(/ /g, "")+".jpg>");
+            					self.$el.find("#recipes").append("<h5>Ingredients</h5>");
+            					self.$el.find("#recipes").append("<ul id='ingredients"+$(session).attr("SessionId").replace("{","").replace("}","")+"'></ul>");
+            					_.each(ingredients, function (ingredient) {
+            						var text = "";
+            						if ( $(ingredient).find("healthyUsed").text() == "true" ) {
+            							text = $(ingredient).find("healthy").find("quantity").text() + " " + $(ingredient).find("healthy").find("item").text();
+            						} else {
+            							text = $(ingredient).find("normal").find("quantity").text() + " " + $(ingredient).find("normal").find("item").text()
+            						}
+            						self.$el.find("#ingredients"+$(session).attr("SessionId").replace("{","").replace("}","")).append("<li>"+text+"</li>");
+            					});
 
-					dataArray = $(response).find("DataPoint[Count!='0']").map(function()
-					{
-					      return $(this).attr("Count");
-					}) ;
-
-					var options = { 
-						//Boolean - If we want to override with a hard coded scale
-						scaleOverride : true,
-	
-						//** Required if scaleOverride is true **
-						//Number - The number of steps in a hard coded scale
-						scaleSteps : 3,
-						
-						//Number - The value jump in the hard coded scale
-						scaleStepWidth :  Math.ceil(Math.max.apply(Math, dataArray), 3),
-						
-						//Number - The scale starting value
-						scaleStartValue : 0,
-
-						scaleFontColor : "#562147"
-					}
-            				var data = {
-						labels : labelArray,
-						datasets : [
-							{
-								fillColor : "rgba(86,33,71,0.5)",
-								strokeColor : "rgba(86,33,71,1)",
-								data : dataArray
-							}
-						]
-					}
-
-					var myScore = parseFloat($(response).find("ExhibitSession VerticalLeap").attr("HeightInches")).toFixed(1);
-					var meIndex = $.inArray( myScore, labelArray);
-					labelArray[meIndex] = "My Score " + labelArray[meIndex];
-					$("#yourScore").text("My Score " + myScore + " Inches");
-
-					var ctx = document.getElementById("myChart").getContext("2d");
-					var mychart = new Chart(ctx).HorizontalBar(data, options);
+            					self.$el.find("#recipes").append("<h5>Directions</h5>");
+            					self.$el.find("#recipes").append("<ol id='directions"+$(session).attr("SessionId").replace("{","").replace("}","")+"'></ol>");
+            					_.each(directions, function (direction) {
+            						var text = "";
+            						text = new XMLSerializer().serializeToString(direction).replace("<step>","").replace("</step>","");
+            						self.$el.find("#directions"+$(session).attr("SessionId").replace("{","").replace("}","")).append("<li>"+text+"</li>");
+            					});
+            					
+            				});
             			},
             			error: function ( data ) {
             				alert("Failed to retrieve exhibit session data");

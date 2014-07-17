@@ -10,14 +10,17 @@ a, abbr, address, article, aside, audio, b, blockquote, body, canvas, caption, c
 	src: url("../font/ChaletComprime-CologneSevet.otf") format("opentype");
 }
 
-
 body {
 	font-family: ChaletComprime-CologneSevet, Helvetica, Verdana, Sans-Serif;
 	background-image: url("../images/background_plain.jpg");
 	color: #562147;
 }
 
-h1, h2, h3 {
+hr {
+	width: 75%;
+}
+
+h1, h2, h3, h4 , h5{
 	margin: 0 auto;
 	text-align: center;
 	width:100%;
@@ -36,6 +39,20 @@ h2 {
 h3 {
 	font-size: 2em;
 	margin-top:.15em;
+}
+
+h4 {
+	font-size: 24px;
+	margin-top: 25px;
+	text-align: left;
+	width: 75%;
+}
+
+h5 {
+	font-size: 22px;
+	margin-top: 10px;
+	text-align: left;
+	width: 75%;
 }
 
 label, input, select {
@@ -63,6 +80,14 @@ img {
 
 label {
 	margin-top:.25em;
+}
+
+ul, ol {
+	margin: 0 auto;
+	text-align: left;
+	width: 75%;
+	margin-top: 10px;
+	font-size: 22px;
 }
 
 #button-holder {
@@ -93,6 +118,10 @@ label {
 	float: left;
 }
 
+.food-image {
+
+}
+
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
 	.button-container {
 		margin: 0 auto;
@@ -111,6 +140,10 @@ label {
 		/*width: 25%;*/
 		height: 230px;
 		text-align: center;
+	}
+
+	.food-image {
+		width: 258px;
 	}
 }
 
